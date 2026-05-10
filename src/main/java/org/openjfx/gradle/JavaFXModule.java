@@ -56,10 +56,10 @@ public enum JavaFXModule {
 
     static final String PREFIX_MODULE = "javafx.";
     static final String INCUBATOR_PREFIX_MODULE = "jfx.incubator.";
-    static final String JDK_PREFIX_MODULE = "jdk.";
+    static final String JDK_PREFIX_MODULE = "jdk.jsobject";
     private static final String PREFIX_ARTIFACT = "javafx-";
     private static final String INCUBATOR_PREFIX_ARTIFACT = "jfx-incubator-";
-    private static final String JDK_PREFIX_ARTIFACT = "jdk-";
+    private static final String JDK_PREFIX_ARTIFACT = "jdk-jsobject";
 
     private final List<JavaFXModule> dependentModules;
     private final boolean isIncubator;
