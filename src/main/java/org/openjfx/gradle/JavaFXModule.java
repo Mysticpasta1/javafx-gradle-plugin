@@ -51,7 +51,7 @@ public enum JavaFXModule {
     WEB(BASE, CONTROLS, GRAPHICS, MEDIA),
     INPUT_INCUBATOR(true, false, BASE, GRAPHICS, CONTROLS),
     RICHTEXT_INCUBATOR(true, false, BASE, GRAPHICS, CONTROLS, INPUT_INCUBATOR),
-    JSOBJECT_JDK(false, true, BASE, CONTROLS, GRAPHICS, MEDIA, WEB),
+    JDK_JSOBJECT(false, true, BASE, CONTROLS, GRAPHICS, MEDIA, WEB),
     ;
 
     static final String PREFIX_MODULE = "javafx.";
