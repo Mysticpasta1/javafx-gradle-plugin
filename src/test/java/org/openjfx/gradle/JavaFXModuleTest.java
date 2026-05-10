@@ -86,6 +86,28 @@ class JavaFXModuleTest {
     }
 
     @Test
+    void existingJdkModuleName() {
+        Optional<JavaFXModule> javafxDependency = JavaFXModule.fromModuleName("jdk.jsobject");
+        assertTrue(javafxDependency.isPresent(), "Expected the text to convert to a module, but it did not");
+        assertEquals(JavaFXModule.RICHTEXT_INCUBATOR, javafxDependency.get());
+    }
+
+    @Test
+    void nonExistingIncubatorModuleName() {
+        assertTrue(JavaFXModule.fromModuleName("jdk.unknown").isEmpty(), "Somehow got a module from an unknown module name.");
+    }
+
+    @Test
+    void getIncubatorModuleName() {
+        assertEquals("jdk.jsobject", JavaFXModule.JDK_JSOBJECT.getModuleName());
+    }
+
+    @Test
+    void getIncubatorArtifactName() {
+        assertEquals("jdk-jsobject", JavaFxModule.JDK_JSOBJECT.getArtifactName());
+    }
+
+    @Test
     void validateWithValidModules() {
         var moduleNames = List.of(JavaFXModule.CONTROLS.getModuleName(), JavaFXModule.WEB.getModuleName());
 
