@@ -48,15 +48,26 @@ public enum JavaFXModule {
     FXML(BASE, GRAPHICS),
     MEDIA(BASE, GRAPHICS),
     SWING(BASE, GRAPHICS),
-    WEB(BASE, CONTROLS, GRAPHICS, MEDIA);
+    WEB(BASE, CONTROLS, GRAPHICS, MEDIA),
+    INPUT_INCUBATOR(true, BASE, GRAPHICS, CONTROLS),
+    RICHTEXT_INCUBATOR(true, BASE, GRAPHICS, CONTROLS, INPUT_INCUBATOR),
+    ;
 
     static final String PREFIX_MODULE = "javafx.";
+    static final String INCUBATOR_PREFIX_MODULE = "jfx.incubator.";
     private static final String PREFIX_ARTIFACT = "javafx-";
+    private static final String INCUBATOR_PREFIX_ARTIFACT = "jfx-incubator-";
 
     private final List<JavaFXModule> dependentModules;
+    private final boolean isIncubator;
+
+    JavaFXModule(boolean isIncubator, JavaFXModule... dependentModules) {
+        this.isIncubator = isIncubator;
+        this.dependentModules = List.of(dependentModules);
+    }
 
     JavaFXModule(JavaFXModule...dependentModules) {
-        this.dependentModules = List.of(dependentModules);
+        this(false, dependentModules);
     }
 
     public static Optional<JavaFXModule> fromModuleName(String moduleName) {
@@ -65,8 +76,12 @@ public enum JavaFXModule {
                 .findFirst();
     }
 
+    private String baseName() {
+        return name().replace("_INCUBATOR", "").toLowerCase(Locale.ROOT);
+    }
+
     public String getModuleName() {
-        return PREFIX_MODULE + name().toLowerCase(Locale.ROOT);
+        return (isIncubator ? INCUBATOR_PREFIX_MODULE : PREFIX_MODULE) + baseName();
     }
 
     public String getModuleJarFileName() {
@@ -74,7 +89,7 @@ public enum JavaFXModule {
     }
 
     public String getArtifactName() {
-        return PREFIX_ARTIFACT + name().toLowerCase(Locale.ROOT);
+        return (isIncubator ? INCUBATOR_PREFIX_ARTIFACT : PREFIX_ARTIFACT) + baseName();
     }
 
     public boolean compareJarFileName(JavaFXPlatform platform, String jarFileName) {
@@ -83,10 +98,21 @@ public enum JavaFXModule {
     }
 
     public static Set<JavaFXModule> getJavaFXModules(Collection<String> moduleNames) {
+        validateModules(moduleNames);
         return moduleNames.stream()
                 .map(JavaFXModule::fromModuleName)
                 .flatMap(Optional::stream)
                 .collect(Collectors.toSet());
+    }
+
+    public static void validateModules(Collection<String> moduleNames) {
+        var invalidModules = moduleNames.stream()
+                .filter(module -> JavaFXModule.fromModuleName(module).isEmpty())
+                .collect(Collectors.toList());
+
+        if (! invalidModules.isEmpty()) {
+            throw new GradleException("Found one or more invalid JavaFX module names: " + invalidModules);
+        }
     }
 
     public List<JavaFXModule> getDependentModules() {
