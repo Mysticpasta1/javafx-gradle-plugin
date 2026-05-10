@@ -83,21 +83,10 @@ public enum JavaFXModule {
     }
 
     public static Set<JavaFXModule> getJavaFXModules(Collection<String> moduleNames) {
-        validateModules(moduleNames);
         return moduleNames.stream()
                 .map(JavaFXModule::fromModuleName)
                 .flatMap(Optional::stream)
                 .collect(Collectors.toSet());
-    }
-
-    public static void validateModules(Collection<String> moduleNames) {
-        var invalidModules = moduleNames.stream()
-                .filter(module -> JavaFXModule.fromModuleName(module).isEmpty())
-                .collect(Collectors.toList());
-
-        if (! invalidModules.isEmpty()) {
-            throw new GradleException("Found one or more invalid JavaFX module names: " + invalidModules);
-        }
     }
 
     public List<JavaFXModule> getDependentModules() {
