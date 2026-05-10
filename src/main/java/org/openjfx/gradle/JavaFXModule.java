@@ -49,25 +49,30 @@ public enum JavaFXModule {
     MEDIA(BASE, GRAPHICS),
     SWING(BASE, GRAPHICS),
     WEB(BASE, CONTROLS, GRAPHICS, MEDIA),
-    INPUT_INCUBATOR(true, BASE, GRAPHICS, CONTROLS),
-    RICHTEXT_INCUBATOR(true, BASE, GRAPHICS, CONTROLS, INPUT_INCUBATOR),
+    INPUT_INCUBATOR(true, false, BASE, GRAPHICS, CONTROLS),
+    RICHTEXT_INCUBATOR(true, false, BASE, GRAPHICS, CONTROLS, INPUT_INCUBATOR),
+    JSOBJECT_JDK(false, true, BASE, CONTROLS, GRAPHICS, MEDIA, WEB),
     ;
 
     static final String PREFIX_MODULE = "javafx.";
     static final String INCUBATOR_PREFIX_MODULE = "jfx.incubator.";
+    static final String JDK_PREFIX_MODULE = "jdk.";
     private static final String PREFIX_ARTIFACT = "javafx-";
     private static final String INCUBATOR_PREFIX_ARTIFACT = "jfx-incubator-";
+    private static final String JDK_PREFIX_ARTIFACT = "jdk-";
 
     private final List<JavaFXModule> dependentModules;
     private final boolean isIncubator;
+    private final boolean isJdk;
 
-    JavaFXModule(boolean isIncubator, JavaFXModule... dependentModules) {
+    JavaFXModule(boolean isIncubator, boolean isJdk, JavaFXModule... dependentModules) {
         this.isIncubator = isIncubator;
+        this.isJdk = isJdk;
         this.dependentModules = List.of(dependentModules);
     }
 
     JavaFXModule(JavaFXModule...dependentModules) {
-        this(false, dependentModules);
+        this(false, false, dependentModules);
     }
 
     public static Optional<JavaFXModule> fromModuleName(String moduleName) {
@@ -81,7 +86,7 @@ public enum JavaFXModule {
     }
 
     public String getModuleName() {
-        return (isIncubator ? INCUBATOR_PREFIX_MODULE : PREFIX_MODULE) + baseName();
+        return isJdk ? JDK_PREFIX_MODULE : (isIncubator ? INCUBATOR_PREFIX_MODULE : PREFIX_MODULE) + baseName();
     }
 
     public String getModuleJarFileName() {
@@ -89,7 +94,7 @@ public enum JavaFXModule {
     }
 
     public String getArtifactName() {
-        return (isIncubator ? INCUBATOR_PREFIX_ARTIFACT : PREFIX_ARTIFACT) + baseName();
+        return isJdk ? JDK_PREFIX_ARTIFACT : (isIncubator ? INCUBATOR_PREFIX_ARTIFACT : PREFIX_ARTIFACT) + baseName();
     }
 
     public boolean compareJarFileName(JavaFXPlatform platform, String jarFileName) {
